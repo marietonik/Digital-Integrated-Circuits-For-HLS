@@ -1,1 +1,1 @@
-# Digital_Integrated_Circuits_For_HLS
+# Digital - Integrated - Circuits - For - HLS
