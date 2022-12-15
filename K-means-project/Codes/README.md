@@ -1,6 +1,6 @@
 /******************************************************************************
 
-                            MARIA ARETI GERMANOU 57807
-                       INTEGRATED CIRCUITS FOR HLS - PROJECT
-
+                          MARIA ARETI GERMANOU 57807
+                     INTEGRATED CIRCUITS FOR HLS - PROJECT
+                     
 *******************************************************************************/
