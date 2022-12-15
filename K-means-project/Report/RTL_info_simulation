@@ -1,0 +1,53 @@
+/* These are the results of RTL's Simulation*/
+
+# SCVerify intercepting C++ function 'kmeans<10, 3>' for RTL block 'kmeans_10_3'
+# Info: HW reset: TLS_rst active @ 0 s
+# The 3 centers are:
+# 6, 4
+# 5, 7
+# 3, 1
+# Info: Execution of user-supplied C++ testbench 'main()' has completed with exit code = 0
+# 
+# Info: Collecting data completed
+#    captured 2 values of points_x
+#    captured 2 values of points_y
+#    captured 2 values of ID_IN
+#    captured 2 values of ID
+#    captured 2 values of center_x_IN
+#    captured 2 values of center_x
+#    captured 2 values of center_y_IN
+#    captured 2 values of center_y
+#    captured 2 values of return
+# Info: scverify_top/user_tb: Simulation completed
+# 
+# Checking results
+# 'ID'
+#    capture count        = 2
+#    comparison count     = 2
+#    ignore count         = 0
+#    error count          = 0
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# 'center_x'
+#    capture count        = 2
+#    comparison count     = 2
+#    ignore count         = 0
+#    error count          = 0
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# 'center_y'
+#    capture count        = 2
+#    comparison count     = 2
+#    ignore count         = 0
+#    error count          = 0
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# 'return'
+#    capture count        = 2
+#    comparison count     = 2
+#    ignore count         = 0
+#    error count          = 0
+#    stuck in dut fifo    = 0
+#    stuck in golden fifo = 0
+# 
+# Info: scverify_top/user_tb: Simulation PASSED @ 400 ns
