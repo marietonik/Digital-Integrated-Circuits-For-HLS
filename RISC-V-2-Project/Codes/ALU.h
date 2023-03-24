@@ -31,10 +31,6 @@ class ALU
         return op1 ^ op2;
     }
 
-    ac_int<32,true> ALU::comparator_equal(ac_int<32,true> op1, ac_int<32,true> op2) {
-        return op1 == op2;
-    }
-
     ac_int<32,true> ALU::shift_right_arithmetic(ac_int<32,true> op1, ac_int<32,true> op2) {
         ac_int<5,false> op2_five_lsb = op2.slc<5>(0);
         return op1 >> op2_five_lsb;
