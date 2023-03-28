@@ -76,7 +76,7 @@ class ALU
         return unsigned_op1 >= unsigned_op2;
     }
 
-    ac_int<32,true> ALU::operations(ac_int<4,false> ALU_opcode, ac_int<32,true> operation_1, ac_int<32,true> operation_2, ){
+    ac_int<32,true> ALU::operations(ac_int<4,false> ALU_opcode, ac_int<32,true> operation_1, ac_int<32,true> operation_2){
 
         switch(ALU_opcode){
 
