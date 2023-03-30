@@ -3,7 +3,6 @@
 
 #include "ALU.h"
 #include "Processor.h"
-#include "Immediate_Types.h"
 #include "ac_int.h"
 #include <iostream>
 using namespace std;
@@ -19,6 +18,96 @@ class Processor
         return instruction_memory[PC.slc<30>(2)];
     }
     */
+
+    ac_int<1,false> check_decode(ac_int<1,false> invalid_instruction, ac_int<7,false> opcode, ac_int<4,false> ALU_opcode, ac_int<3,false> control){
+
+        if(invalid_instruction == 0){
+            cout << "Opcode: " << opcode << endl;
+            cout << "ALU opcode: " << ALU_opcode << endl;
+            cout << "Control: " << control << endl;
+        }
+
+        else{
+            cout << "Break due to invalid parameters..." << endl;
+        }
+
+        return invalid_instruction;
+    }
+
+    ac_int<32,true> i_immediate(ac_int<32,true> instruction){
+
+        ac_int<32,true> imm = 0;
+        ac_int<1,false> imm_part_1 = instruction[20];
+        ac_int<4,false> imm_part_2 = instruction.slc<4>(21);
+        ac_int<6,false> imm_part_3 = instruction.slc<6>(25);
+        ac_int<1,false> imm_part_4 = instruction[31];
+        imm[0] = imm_part_1;
+        imm.set_slc(1,imm_part_2);
+        imm.set_slc(5,imm_part_3);
+        imm.set_slc(11,imm_part_4);
+
+        return imm;
+    }
+
+    ac_int<32,true> s_immediate(ac_int<32,true> instruction){
+
+        ac_int<32,true> imm = 0;
+        ac_int<1,false> imm_part_1 = instruction[7];
+        ac_int<4,false> imm_part_2 = instruction.slc<4>(8);
+        ac_int<6,false> imm_part_3 = instruction.slc<6>(25);
+        ac_int<1,false> imm_part_4 = instruction[31];
+        imm[0] = imm_part_1;
+        imm.set_slc(1,imm_part_2);
+        imm.set_slc(5,imm_part_3);
+        imm.set_slc(11,imm_part_4);
+
+        return imm;
+    }
+
+    ac_int<32,true> b_immediate(ac_int<32,true> instruction){
+
+        ac_int<32,true> imm = 0;
+        ac_int<4,false> imm_part_1 = instruction.slc<4>(8);
+        ac_int<6,false> imm_part_2 = instruction.slc<6>(25);
+        ac_int<1,false> imm_part_3 = instruction[7];
+        ac_int<1,false> imm_part_4 = instruction[31];
+        imm.set_slc(1,imm_part_1);
+        imm.set_slc(5,imm_part_2);
+        imm[11] = imm_part_3;
+        imm.set_slc(12,imm_part_4);
+
+        return imm;
+    }
+   
+    ac_int<32,true> u_immediate(ac_int<32,true> instruction){
+
+        ac_int<32,true> imm = 0;
+        ac_int<8,false> imm_part_1 = instruction.slc<8>(12);
+        ac_int<11,false> imm_part_2 = instruction.slc<11>(20);
+        ac_int<1,false> imm_part_3 = instruction[31];
+        imm.set_slc(12,imm_part_1);
+        imm.set_slc(20,imm_part_2);
+        imm[31] = imm_part_3;
+
+        return imm;
+    }
+
+    ac_int<32,true> j_immediate(ac_int<32,true> instruction){
+        
+        ac_int<32,true> imm = 0;
+        ac_int<4,false> imm_part_1 = instruction.slc<4>(21);
+        ac_int<6,false> imm_part_2 = instruction.slc<6>(25);
+        ac_int<1,false> imm_part_3 = instruction[20];
+        ac_int<8,false> imm_part_4 = instruction.slc<8>(12);
+        ac_int<1,false> imm_part_5 = instruction[31];
+        imm.set_slc(1,imm_part_1);
+        imm.set_slc(5,imm_part_2);
+        imm[11] = imm_part_3;
+        imm.set_slc(12,imm_part_4);
+        imm.set_slc(20,imm_part_5);
+
+        return imm;
+    }
 
     ac_int<32,true> decode_instruction(ac_int<32,true> instruction){
 
@@ -135,7 +224,7 @@ class Processor
                 ac_int<5,false> rs1 = instruction.slc<5>(15);
         
                 ac_int<20,false> sign_imm = -1;
-                ac_int<32,true> sext_imm = 0; //Immediate_Types::i_immediate(instruction); 
+                ac_int<32,true> sext_imm = i_immediate(instruction); 
 
                 if(sext_imm[11] == 1){
                     sext_imm.set_slc(12,sign_imm);
@@ -215,7 +304,7 @@ class Processor
             ac_int<5,false> rs1 = instruction.slc<5>(15);
 
             ac_int<20,false> sign_imm = -1;
-            ac_int<32,true> sext_imm = 0; //Immediate_Types::i_immediate(instruction); 
+            ac_int<32,true> sext_imm = i_immediate(instruction); 
 
             destination = rd;
             operation_1 = sext_imm;
@@ -246,7 +335,7 @@ class Processor
             ac_int<5,false> rs2 = instruction.slc<5>(20);
 
             ac_int<20,false> sign_imm = -1;
-            ac_int<32,true> sext_imm = 0; //Immediate_Types::s_immediate(instruction); 
+            ac_int<32,true> sext_imm = s_immediate(instruction); 
             
             if(sext_imm[11] == 1){
                 sext_imm.set_slc(12,sign_imm);
@@ -273,7 +362,7 @@ class Processor
             case 55: 
             {
             ac_int<5,false> rd = instruction.slc<5>(7);
-            ac_int<32,true> sext_imm = 0; //Immediate_Types::u_immediate(instruction);
+            ac_int<32,true> sext_imm = u_immediate(instruction);
 
             destination = rd;
             operation_1 = sext_imm;
@@ -288,7 +377,7 @@ class Processor
             case 23: 
             {
             ac_int<5,false> rd = instruction.slc<5>(7);
-            ac_int<32,true> sext_imm = 0; //Immediate_Types::u_immediate(instruction);
+            ac_int<32,true> sext_imm = u_immediate(instruction);
 
             destination = rd;
             operation_1 = sext_imm;
@@ -305,7 +394,7 @@ class Processor
             ac_int<5,false> rd = instruction.slc<5>(7);
 
             ac_int<12,false> sign_imm = -1;
-            ac_int<32,true> sext_imm = 0; //Immediate_Types::j_immediate(instruction);
+            ac_int<32,true> sext_imm = j_immediate(instruction);
             
             if(sext_imm[20] == 1){
                 sext_imm.set_slc(11,sign_imm);
@@ -328,7 +417,7 @@ class Processor
             ac_int<5,false> rs1 = instruction.slc<5>(15);
 
             ac_int<20,false> sign_imm = -1;
-            ac_int<32,true> sext_imm = 0; //Immediate_Types::i_immediate(instruction);
+            ac_int<32,true> sext_imm = i_immediate(instruction);
 
             destination = rd;
             operation_1 = R[rs1];
@@ -364,7 +453,7 @@ class Processor
             ac_int<5,false> rs2 = instruction.slc<5>(20);
 
             ac_int<20,false> sign_imm = -1;
-            ac_int<32,true> sext_imm = 0; //Immediate_Types::b_immediate(instruction);
+            ac_int<32,true> sext_imm = b_immediate(instruction);
 
             destination = sext_imm;
             operation_1 = R[rs1];
@@ -414,22 +503,11 @@ class Processor
             break;
             }
 
-            default:
-            
-            if(invalid_instruction == 1){
-                cout << "Break due to invalid parameters..." << endl;
-            }
-
-            else{
-                cout << "Valid parameters, continue..." << endl;
-                cout << "/n" << ALU_opcode << endl;
-                cout << "/n" << destination << endl;
-                cout << "/n" << operation_1 << endl;
-                cout << "/n" << operation_2 << endl;
-                cout << "/n" << control << endl;
-            }
+            default:  
+            invalid_instruction = 1;
         }
 
+        check_decode(invalid_instruction, opcode, ALU_opcode, control);
         return 0;
     }
 };
