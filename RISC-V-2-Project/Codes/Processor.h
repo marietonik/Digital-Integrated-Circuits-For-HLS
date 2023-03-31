@@ -14,7 +14,7 @@ class Processor
     ac_int<32,false> R[32];
 
     /*
-    ac_int<32,false> Processor::read_instruction(ac_int<32,false> instruction_memory[256]){
+    ac_int<32,false> read_instruction(ac_int<32,false> instruction_memory[256]){
         return instruction_memory[PC.slc<30>(2)];
     }
     */
