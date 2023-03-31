@@ -13,12 +13,6 @@ class Processor
     ac_int<32,false> PC;
     ac_int<32,false> R[32];
 
-    /*
-    ac_int<32,false> read_instruction(ac_int<32,false> instruction_memory[256]){
-        return instruction_memory[PC.slc<30>(2)];
-    }
-    */
-
     ac_int<1,false> check_decode(ac_int<1,false> invalid_instruction, ac_int<7,false> opcode, ac_int<4,false> ALU_opcode, ac_int<3,false> control){
 
         if(invalid_instruction == 0){
