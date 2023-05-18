@@ -5,13 +5,23 @@
 #include "Processor.h"
 #include "ac_int.h"
 #include <iostream>
+#include <bitset>
 using namespace std;
 
 class Processor
 {
     public:
     ac_int<32,false> PC;
-    ac_int<32,false> R[32];
+    ac_int<32,true> R[32];
+    ac_int<32,false> instruction_memory[256];
+    ALU alu;
+
+    Processor()
+    {
+        PC = 200;
+        R[0] = 0;
+        cout << "Initial PC is: " << PC << "\n" << endl;
+    }
 
     ac_int<1,false> check_decode(ac_int<1,false> invalid_instruction, ac_int<7,false> opcode, ac_int<4,false> ALU_opcode, ac_int<3,false> control){
 
@@ -27,6 +37,29 @@ class Processor
 
         return invalid_instruction;
     }
+
+     ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<32,false> destination, ac_int<3,false> control){
+
+        if(control == 1){
+            cout << "Result: "<< alu.operations(ALU_opcode, operation_1, operation_2) << "\n" << endl;
+        }
+        else if(control == 2){
+            cout << "LW" << endl;
+        }
+        else if(control == 3){
+            cout << "SW" << endl;
+        }
+        else if(control == 4){
+            cout << "jal,jalr,jr" << endl;
+        }
+        else if(control == 5){
+            cout << "lui, aipc" << endl;
+        }
+        else{
+            cout << "Continue..." << endl;
+        }
+        return 0;
+     }
 
     ac_int<32,true> i_immediate(ac_int<32,true> instruction){
 
@@ -124,11 +157,6 @@ class Processor
                 ac_int<5,false> rs2 = instruction.slc<5>(20);
                 ac_int<7,false> func7 = instruction.slc<7>(25);
 
-                destination = rd;
-                operation_1 = R[rs1];
-                operation_2 = R[rs2];
-                control = 1;
-
                 if(func7 == 0){
                     
                     if(func3 == 0){
@@ -209,6 +237,16 @@ class Processor
                     ALU_opcode = 0;
                 }
                 
+                destination = rd;
+                operation_1 = R[rs1];
+                operation_2 = R[rs2];
+                control = 1;
+
+                cout << "\n" << "Operant 1: R[" << rs1 << "]" << endl;
+                cout << "Operant 2: R[" << rs2 << "]" << endl;
+                cout << "Destination: R[" << destination << "]" << "\n" << endl;
+                PC = PC + 4;
+
                 break;
             }
             case 19: 
@@ -223,11 +261,6 @@ class Processor
                 if(sext_imm[11] == 1){
                     sext_imm.set_slc(12,sign_imm);
                 }
-
-                destination = rd;
-                operation_1 = R[rs1];
-                operation_2 = sext_imm;
-                control = 1;
 
                 if (func3 == 0){
                     std::cout << "ADDI Instruction" << endl;
@@ -289,6 +322,16 @@ class Processor
                     ALU_opcode = 0;
                 }
 
+                destination = rd;
+                operation_1 = R[rs1];
+                operation_2 = sext_imm;
+                control = 1;
+
+                cout << "\n" << "Operant 1: R[" << rs1 << "]" << endl;
+                cout << "Operant 2: " << sext_imm << endl;
+                cout << "Destination: R[" << destination << "]" << "\n" << endl;
+                PC = PC + 4;
+
                 break;
             }
             case 3: 
@@ -299,11 +342,6 @@ class Processor
 
             ac_int<20,false> sign_imm = -1;
             ac_int<32,true> sext_imm = i_immediate(instruction); 
-
-            destination = rd;
-            operation_1 = sext_imm;
-            operation_2 = R[rs1];
-            control = 2;
 
             if(sext_imm[11] == 1){
                 sext_imm.set_slc(12,sign_imm);
@@ -320,6 +358,16 @@ class Processor
                 ALU_opcode = 0;
             }
 
+            destination = rd;
+            operation_1 = sext_imm;
+            operation_2 = R[rs1];
+            control = 2;
+
+            cout << "\n" << "Operant 1: " << sext_imm << endl;
+            cout << "Operant 2: R[" << rs1 << "]" << endl;
+            cout << "Destination: R[" << destination << "]" << "\n" << endl;
+            PC = PC + 4;
+
             break;
             }
             case 35: 
@@ -335,11 +383,6 @@ class Processor
                 sext_imm.set_slc(12,sign_imm);
             }
 
-            destination = R[rs2];
-            operation_1 = R[rs1];
-            operation_2 = sext_imm;
-            control = 3;
-
             if(func3 == 2){
                 std::cout << "SW instruction" << std::endl;
                 ALU_opcode = 0;
@@ -351,6 +394,16 @@ class Processor
                 ALU_opcode = 0;
             }
 
+            destination = R[rs2];
+            operation_1 = R[rs1];
+            operation_2 = sext_imm;
+            control = 3;
+
+            cout << "\n" << "Operant 1: R[" << rs1 << "]" << endl;
+            cout << "Operant 2: " << sext_imm << endl;
+            cout << "Destination: R[" << rs2 << "]" << "\n" << endl;
+            PC = PC + 4;
+
             break;
             }
             case 55: 
@@ -358,29 +411,41 @@ class Processor
             ac_int<5,false> rd = instruction.slc<5>(7);
             ac_int<32,true> sext_imm = u_immediate(instruction);
 
+            std::cout << "LUI instruction" << std::endl;
+            
+            ALU_opcode = 0;
             destination = rd;
             operation_1 = sext_imm;
             operation_2 = 0;
-            control = 1;
+            control = 5;
 
-            std::cout << "LUI instruction" << std::endl;
-            ALU_opcode = 0;
+            cout << "\n" << "Operant 1: " << sext_imm << endl;
+            cout << "Operant 2: " << operation_2 << endl;
+            cout << "Destination: R[" << destination << "]" << "\n" << endl;
+            cout << "Result: "<< bitset<32>(sext_imm) << "\n";
 
+            PC = PC + 4;
             break;
             }
             case 23: 
             {
             ac_int<5,false> rd = instruction.slc<5>(7);
             ac_int<32,true> sext_imm = u_immediate(instruction);
+            
+            std::cout << "AUIPC instruction" << std::endl;
 
+            ALU_opcode = 0;
             destination = rd;
             operation_1 = sext_imm;
             operation_2 = PC;
-            control = 1;
+            control = 5;
             
-            std::cout << "AUIPC instruction" << std::endl;
-            ALU_opcode = 0;
+            cout << "\n" << "Operant 1: " << sext_imm << endl;
+            cout << "Operant 2: " << operation_2 << endl;
+            cout << "Destination: R[" << destination << "]" << "\n" << endl;
+            cout << "Result: "<< bitset<32>(sext_imm) << "\n";
             
+            PC = PC + 4;  
             break;
             }
             case 111:
@@ -393,15 +458,21 @@ class Processor
             if(sext_imm[20] == 1){
                 sext_imm.set_slc(11,sign_imm);
             }
-
+            
+            std::cout << "JAL instruction" << std::endl;
+            ALU_opcode = 0;
             destination = rd;
             operation_1 = PC;
             operation_2 = sext_imm;
             control = 4;
             
-            std::cout << "JAL instruction" << std::endl;
-            ALU_opcode = 0;
-            
+            cout << "\n" << "Operant 1: " << operation_1 << endl;
+            cout << "Operant 2: " << sext_imm << endl;
+            cout << "Destination: R[" << destination << "]" << "\n" << endl;
+
+            R[rd] = PC + 4;
+            PC = operation_1 + operation_2;
+        
             break;
             }
             case 103: 
@@ -412,11 +483,6 @@ class Processor
 
             ac_int<20,false> sign_imm = -1;
             ac_int<32,true> sext_imm = i_immediate(instruction);
-
-            destination = rd;
-            operation_1 = R[rs1];
-            operation_2 = sext_imm;
-            control = 4;
             
             if(sext_imm[11] == 1){
                 sext_imm.set_slc(20,sign_imm);
@@ -438,6 +504,18 @@ class Processor
                 ALU_opcode = 0;
             }
 
+            destination = rd;
+            operation_1 = R[rs1];
+            operation_2 = sext_imm;
+            control = 4;
+
+            cout << "\n" << "Operant 1: R[" << operation_1 << "]" << endl;
+            cout << "Operant 2: " << sext_imm << endl;
+            cout << "Destination: R[" << destination << "]" << "\n" << endl;
+
+            R[rd] = PC + 4;
+            PC = operation_1 + operation_2;
+
             break;
             }
             case 99:
@@ -448,11 +526,8 @@ class Processor
 
             ac_int<20,false> sign_imm = -1;
             ac_int<32,true> sext_imm = b_immediate(instruction);
-
-            destination = sext_imm;
-            operation_1 = R[rs1];
-            operation_2 = R[rs2];
-            control = 0;
+            
+            ac_int<1,false> result;
             
             if(sext_imm[11] == 1){
                 sext_imm.set_slc(12,sign_imm);
@@ -461,47 +536,73 @@ class Processor
             if(func3 == 0){
                 std::cout << "BEQ instruction" << std::endl;
                 ALU_opcode = 12;
+                result = (operation_1 == operation_2);
             }
 
             else if(func3 == 1){
                 std::cout << "BNE instruction" << std::endl;
                 ALU_opcode = 13;
+                result = (operation_1 != operation_2);
             }
 
             else if(func3 == 4){
                 std::cout << "BLT instruction" << std::endl;
                 ALU_opcode = 3;
+                result = (operation_1 < operation_2);
             }
 
             else if(func3 == 5){
                 std::cout << "BGE instruction" << std::endl;
                 ALU_opcode = 14;
+                result = (operation_1 >= operation_2);
             }
 
             else if(func3 == 6){
                 std::cout << "BLTU instruction" << std::endl;
                 ALU_opcode = 4;
+                result = (operation_1 < operation_2);
             }
 
             else if(func3 == 7){
                 std::cout << "BGEU instruction" << std::endl;
                 ALU_opcode = 15;
+                result = (operation_1 >= operation_2);
             }
 
             else{
                 std::cout << "Invalid func3" << endl;
                 invalid_instruction = 1;
                 ALU_opcode = 0;
+                result = 0;
             }
 
+            if(result){
+                PC = PC + destination;
+            }
+            else{
+                PC = PC + 4;
+            }
+
+            destination = sext_imm;
+            operation_1 = R[rs1];
+            operation_2 = R[rs2];
+            control = 0;
+
+            cout << "Result: "<< result << "\n";
             break;
             }
 
             default:  
             invalid_instruction = 1;
+            opcode = 0;
+            ALU_opcode = 0;
+            operation_1 = 0;
+            operation_2 = 0;
+            destination = 0;
         }
 
         check_decode(invalid_instruction, opcode, ALU_opcode, control);
+        execute(ALU_opcode, operation_1, operation_2, destination, control);
         return 0;
     }
 };
