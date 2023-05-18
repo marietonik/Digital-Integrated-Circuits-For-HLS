@@ -125,19 +125,23 @@ class Processor
         R[register_address] = value;
     }
 
-    ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<3,false> control){
+    ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<32,false> destination, ac_int<3,false> control){
+        
+        ac_int<32,true> result;
 
         if(control == 1){
-            cout << "Result: "<< alu.operations(ALU_opcode, operation_1, operation_2) << "\n" << endl;
+            
+            result = alu.operations(ALU_opcode, operation_1, operation_2);
+            cout << "Result: "<< result << "\n" << endl;
+            register_write(destination, result);
         }
         else if(control == 2){
             //LW
+            //register_write();
         }
         else if(control == 3){
             //SW
-        }
-        else if(control == 4){
-            //JAL...
+            //memory_write();
         }
         else{
             cout << "Continue..." << "\n" << endl;
@@ -626,7 +630,7 @@ class Processor
         }
 
         check_decode(invalid_instruction, opcode, ALU_opcode, control);
-        execute(ALU_opcode, operation_1, operation_2, control);
+        execute(ALU_opcode, operation_1, operation_2, destination, control);
         return 0;
     }
 };
