@@ -13,53 +13,16 @@ class Processor
     public:
     ac_int<32,false> PC;
     ac_int<32,true> R[32];
-    ac_int<32,false> instruction_memory[256];
+    ac_int<1,false> invalid_instruction;
     ALU alu;
 
     Processor()
     {
         PC = 200;
         R[0] = 0;
+        invalid_instruction = 0;
         cout << "Initial PC is: " << PC << "\n" << endl;
     }
-
-    ac_int<1,false> check_decode(ac_int<1,false> invalid_instruction, ac_int<7,false> opcode, ac_int<4,false> ALU_opcode, ac_int<3,false> control){
-
-        if(invalid_instruction == 0){
-            cout << "Opcode: " << opcode << endl;
-            cout << "ALU opcode: " << ALU_opcode << endl;
-            cout << "Control: " << control << endl;
-        }
-
-        else{
-            cout << "Break due to invalid parameters..." << endl;
-        }
-
-        return invalid_instruction;
-    }
-
-     ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<32,false> destination, ac_int<3,false> control){
-
-        if(control == 1){
-            cout << "Result: "<< alu.operations(ALU_opcode, operation_1, operation_2) << "\n" << endl;
-        }
-        else if(control == 2){
-            cout << "LW" << endl;
-        }
-        else if(control == 3){
-            cout << "SW" << endl;
-        }
-        else if(control == 4){
-            cout << "jal,jalr,jr" << endl;
-        }
-        else if(control == 5){
-            cout << "lui, aipc" << endl;
-        }
-        else{
-            cout << "Continue..." << endl;
-        }
-        return 0;
-     }
 
     ac_int<32,true> i_immediate(ac_int<32,true> instruction){
 
@@ -134,6 +97,67 @@ class Processor
         imm.set_slc(20,imm_part_5);
 
         return imm;
+    }
+    
+    ac_int<32,false> read_instruction_memory(ac_int<32,false> instruction_mem[256]){
+
+        return instruction_mem[PC.slc<30>(2)];
+    }
+
+    ac_int<1,false> run(ac_int<32,false> instruction_mem[256], ac_int<32,true> data_mem[256]){
+
+        decode_instruction(read_instruction_memory(instruction_mem));
+        return 0;
+    }
+
+    ac_int<32,true> memory_read(ac_int<32,true> memory[256], ac_int<32,false> address){
+
+        return memory[address.slc<30>(2)];
+    }
+    
+    void memory_write(ac_int<32,true> memory[256], ac_int<32,false> address, ac_int<32,true> value){
+        
+        memory[address.slc<30>(2)] = value;
+    }
+
+    void register_write(ac_int<32,false> register_address, ac_int<32,true> value){
+        
+        R[register_address] = value;
+    }
+
+    ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<3,false> control){
+
+        if(control == 1){
+            cout << "Result: "<< alu.operations(ALU_opcode, operation_1, operation_2) << "\n" << endl;
+        }
+        else if(control == 2){
+            //LW
+        }
+        else if(control == 3){
+            //SW
+        }
+        else if(control == 4){
+            //JAL...
+        }
+        else{
+            cout << "Continue..." << "\n" << endl;
+        }
+        return 0;
+    }
+
+    ac_int<1,false> check_decode(ac_int<1,false> invalid_instruction, ac_int<7,false> opcode, ac_int<4,false> ALU_opcode, ac_int<3,false> control){
+
+        if(invalid_instruction == 0){
+            cout << "Opcode: " << opcode << endl;
+            cout << "ALU opcode: " << ALU_opcode << endl;
+            cout << "Control: " << control << endl;
+        }
+
+        else{
+            cout << "Break due to invalid parameters..." << endl;
+        }
+
+        return invalid_instruction;
     }
 
     ac_int<32,true> decode_instruction(ac_int<32,true> instruction){
@@ -602,7 +626,7 @@ class Processor
         }
 
         check_decode(invalid_instruction, opcode, ALU_opcode, control);
-        execute(ALU_opcode, operation_1, operation_2, destination, control);
+        execute(ALU_opcode, operation_1, operation_2, control);
         return 0;
     }
 };
