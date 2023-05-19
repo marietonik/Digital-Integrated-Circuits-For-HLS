@@ -164,6 +164,7 @@ class Processor
 
         else{
             cout << "Break due to invalid parameters..." << endl;
+            invalid_instruction = 1;
         }
 
         return invalid_instruction;
