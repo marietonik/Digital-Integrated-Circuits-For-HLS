@@ -112,7 +112,7 @@ class Processor
         data_memory[PC.slc<30>(2)];
 
         decode_instruction(read_instruction_memory(instruction_mem));
-        return 0;
+        return invalid_instruction;
     }
 
     ac_int<32,true> memory_read(ac_int<32,true> memory[256], ac_int<32,false> address){
@@ -636,7 +636,7 @@ class Processor
 
         check_decode(invalid_instruction, opcode, ALU_opcode, control);
         execute(ALU_opcode, operation_1, operation_2, destination, control);
-        return 0;
+        return 1;
     }
 };
 #endif
