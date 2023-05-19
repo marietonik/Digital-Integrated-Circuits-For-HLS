@@ -14,7 +14,9 @@ class Processor
     ac_int<32,false> PC;
     ac_int<32,true> R[32];
     ac_int<1,false> invalid_instruction;
+    ac_int<32,true> data_memory[256];
     ALU alu;
+    
 
     Processor()
     {
@@ -102,9 +104,12 @@ class Processor
     ac_int<32,false> read_instruction_memory(ac_int<32,false> instruction_mem[256]){
 
         return instruction_mem[PC.slc<30>(2)];
-    }
+    }  
 
     ac_int<1,false> run(ac_int<32,false> instruction_mem[256], ac_int<32,true> data_mem[256]){
+        
+        data_memory[256] = data_mem[256];
+        data_memory[PC.slc<30>(2)];
 
         decode_instruction(read_instruction_memory(instruction_mem));
         return 0;
@@ -136,12 +141,12 @@ class Processor
             register_write(destination, result);
         }
         else if(control == 2){
-            //LW
-            //register_write();
+
+            register_write(destination, memory_read(data_memory, operation_2 + operation_1));
         }
         else if(control == 3){
-            //SW
-            //memory_write();
+            
+            memory_write(data_memory, operation_1 + operation_2, destination);
         }
         else{
             cout << "Continue..." << "\n" << endl;

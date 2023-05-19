@@ -11,7 +11,9 @@ int main() {
 ac_int<32,false> instruction_mem[256];
 ac::init_array<AC_VAL_0>(instruction_mem, 256);
 ac_int<32,true> data_mem[256];
-ac::init_array<AC_VAL_0>(data_mem, 256);    
+ac::init_array<AC_VAL_0>(data_mem, 256); 
+
+data_mem[100] = 100; 
 
 // Test:
 instruction_mem[50] = 0b00000100011000000000001000010011; // ADDI R4, R0, 70
@@ -24,6 +26,6 @@ instruction_mem[56] = 0b00000000011000111111001110110011; // AND  R7, R7, R6
 
 Processor processor = Processor();
 
-processor.run(instruction_mem, data_mem);
+while(processor.run(instruction_mem, data_mem));
 
 }
