@@ -120,15 +120,17 @@ class Processor
         }
 
         else if(control == 2){
-            value = (operation_1+operation_2).slc<30>(2);
+            operation_1 = (operation_1).slc<30>(2);
+            value = (operation_2).slc<30>(2) + operation_1;
             R[destination] = data_memory[value];
-            cout << "\n" << "Load word from memory address: mem[" << value << "] and write to R[" << destination << "] \n" << endl;
+            cout << "\n" << "Load word from memory address: mem[Operant 2 + "<< operation_1 << "] and write to R[" << destination << "] \n" << endl;
         }
 
         else if(control == 3){
-            value = (operation_1+operation_2).slc<30>(2);
+            operation_2 = (operation_2).slc<30>(2);
+            value = (operation_1).slc<30>(2) + operation_2;
             data_memory[value] = destination;
-            cout << "\n" << "Store word from register address: R[" << destination << "] and write to memory: mem[" << value << "] \n" << endl;
+            cout << "\n" << "Store word from destination register and write to memory: mem[Operant 1 + " << operation_2 << "] \n" << endl;
         }
 
         else{
@@ -381,7 +383,7 @@ class Processor
             operation_2 = R[rs1];
             control = 2;
 
-            cout << "\n" << "Operant 1: " << sext_imm << endl;
+            cout << "\n" << "Operant 1: " << (sext_imm).slc<30>(2) << endl;
             cout << "Operant 2: R[" << rs1 << "]" << endl;
             cout << "Destination: R[" << destination << "]" << "\n" << endl;
             PC = PC + 4;
@@ -418,7 +420,7 @@ class Processor
             control = 3;
 
             cout << "\n" << "Operant 1: R[" << rs1 << "]" << endl;
-            cout << "Operant 2: " << sext_imm << endl;
+            cout << "Operant 2: " << (sext_imm).slc<30>(2) << endl;
             cout << "Destination: R[" << rs2 << "]" << "\n" << endl;
             PC = PC + 4;
 
