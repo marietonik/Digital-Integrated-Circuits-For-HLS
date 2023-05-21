@@ -116,21 +116,25 @@ class Processor
             result = alu.operations(ALU_opcode, operation_1, operation_2);
             value = result;
             R[destination] = value;
-            cout << "Result: "<< result << "\n" << endl;
+            cout << "Result: "<< result << " written in register R[" << destination << "] \n" << endl;
         }
 
         else if(control == 2){
-            value = data_memory[(operation_1+operation_2).slc<30>(2)];
-            R[destination] = value;
+            value = (operation_1+operation_2).slc<30>(2);
+            R[destination] = data_memory[value];
+            cout << "Load word from memory address: mem[" << value << "] and write to R[" << destination << "] \n" << endl;
         }
 
         else if(control == 3){
-            data_memory[(operation_1+operation_2).slc<30>(2)] = destination;
+            value = (operation_1+operation_2).slc<30>(2);
+            data_memory[value] = destination;
+            cout << "Store word from register address: R[" << destination << "] and write to memory: mem[" << value << "] \n" << endl;
         }
 
         else{
-            cout << "Continue..." << "\n" << endl;
+            cout << "Continue...\n" << endl;
         }
+
         return 0;
     }
 
@@ -362,7 +366,7 @@ class Processor
             }
 
             if(func3 == 2){
-                std::cout << "LW instruction" << std::endl;
+                std::cout << "LW instruction" << endl;
                 ALU_opcode = 0;
             }
 
