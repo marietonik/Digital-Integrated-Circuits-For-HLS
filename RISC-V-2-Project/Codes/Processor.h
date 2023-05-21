@@ -22,7 +22,7 @@ class Processor
         PC = 200;
         R[0] = 0;
         invalid_instruction = 0;
-        cout << "Initial PC is: " << PC << "\n" << endl;
+        cout << "\n" << "Initial PC is: " << PC << "\n" << endl;
     }
 
     ac_int<32,true> i_immediate(ac_int<32,true> instruction){
@@ -116,19 +116,19 @@ class Processor
             result = alu.operations(ALU_opcode, operation_1, operation_2);
             value = result;
             R[destination] = value;
-            cout << "Result: "<< result << " written in register R[" << destination << "] \n" << endl;
+            cout << "\n" << "Result: "<< result << " written in register R[" << destination << "] \n" << endl;
         }
 
         else if(control == 2){
             value = (operation_1+operation_2).slc<30>(2);
             R[destination] = data_memory[value];
-            cout << "Load word from memory address: mem[" << value << "] and write to R[" << destination << "] \n" << endl;
+            cout << "\n" << "Load word from memory address: mem[" << value << "] and write to R[" << destination << "] \n" << endl;
         }
 
         else if(control == 3){
             value = (operation_1+operation_2).slc<30>(2);
             data_memory[value] = destination;
-            cout << "Store word from register address: R[" << destination << "] and write to memory: mem[" << value << "] \n" << endl;
+            cout << "\n" << "Store word from register address: R[" << destination << "] and write to memory: mem[" << value << "] \n" << endl;
         }
 
         else{
@@ -437,7 +437,8 @@ class Processor
             operation_2 = 0;
             control = 5;
 
-            cout << "\n" << "Operant 1: " << sext_imm << endl;
+            cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << endl;
+            cout << "Operant 1: " << sext_imm << endl;
             cout << "Operant 2: " << operation_2 << endl;
             cout << "Destination: R[" << destination << "]" << "\n" << endl;
             cout << "Result: "<< bitset<32>(sext_imm) << "\n";
@@ -458,10 +459,11 @@ class Processor
             operation_2 = PC;
             control = 5;
             
+            cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << endl;
             cout << "\n" << "Operant 1: " << sext_imm << endl;
             cout << "Operant 2: " << operation_2 << endl;
             cout << "Destination: R[" << destination << "]" << "\n" << endl;
-            cout << "Result: "<< bitset<32>(sext_imm) << "\n";
+            cout << "Result: "<< bitset<32>(sext_imm + PC) << "\n";
             
             PC = PC + 4;  
             break;
