@@ -460,7 +460,7 @@ class Processor
             control = 5;
             
             cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << endl;
-            cout << "\n" << "Operant 1: " << sext_imm << endl;
+            cout << "Operant 1: " << sext_imm << endl;
             cout << "Operant 2: " << operation_2 << endl;
             cout << "Destination: R[" << destination << "]" << "\n" << endl;
             cout << "Result: "<< bitset<32>(sext_imm + PC) << "\n";
