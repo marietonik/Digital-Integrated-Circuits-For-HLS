@@ -348,7 +348,7 @@ class Processor
                 control = 1;
 
                 cout << "\n" << "Operant 1: R[" << rs1 << "]" << endl;
-                cout << "Operant 2: " << sext_imm << endl;
+                cout << "Operant 2: " << bitset<32>(sext_imm) << endl;
                 cout << "Destination: R[" << destination << "]" << "\n" << endl;
                 PC = PC + 4;
 
@@ -440,7 +440,7 @@ class Processor
             control = 5;
 
             cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << endl;
-            cout << "Operant 1: " << sext_imm << endl;
+            cout << "Operant 1: " << bitset<32>(sext_imm) << endl;
             cout << "Operant 2: " << operation_2 << endl;
             cout << "Destination: R[" << destination << "]" << "\n" << endl;
             cout << "Result: "<< bitset<32>(sext_imm) << "\n";
@@ -462,7 +462,7 @@ class Processor
             control = 5;
             
             cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << endl;
-            cout << "Operant 1: " << sext_imm << endl;
+            cout << "Operant 1: " << bitset<32>(sext_imm) << endl;
             cout << "Operant 2: " << operation_2 << endl;
             cout << "Destination: R[" << destination << "]" << "\n" << endl;
             cout << "Result: "<< bitset<32>(sext_imm + PC) << "\n";
@@ -488,8 +488,8 @@ class Processor
             operation_2 = sext_imm;
             control = 4;
             
-            cout << "\n" << "Operant 1: " << operation_1 << endl;
-            cout << "Operant 2: " << sext_imm << endl;
+            cout << "\n" << "Operant 1: " << bitset<32>(operation_1) << endl;
+            cout << "Operant 2: " << bitset<32>(sext_imm) << endl;
             cout << "Destination: R[" << destination << "]" << "\n" << endl;
 
             R[rd] = PC + 4;
@@ -548,47 +548,57 @@ class Processor
 
             ac_int<20,false> sign_imm = -1;
             ac_int<32,true> sext_imm = b_immediate(instruction);
-            
             ac_int<1,false> result;
+
+            destination = sext_imm;
+            operation_1 = R[rs1];
+            operation_2 = R[rs2];
+            control = 0;
             
             if(sext_imm[11] == 1){
                 sext_imm.set_slc(12,sign_imm);
             }
 
             if(func3 == 0){
-                std::cout << "BEQ instruction" << std::endl;
+                cout << "BEQ instruction" << endl;
                 ALU_opcode = 12;
                 result = (operation_1 == operation_2);
+                cout << "R[" << rs1 << "] == R[" << rs2 << "]" << endl;
             }
 
             else if(func3 == 1){
-                std::cout << "BNE instruction" << std::endl;
+                cout << "BNE instruction" << endl;
                 ALU_opcode = 13;
                 result = (operation_1 != operation_2);
+                cout << "R[" << rs1 << "] != R[" << rs2 << "]" << endl;
             }
 
             else if(func3 == 4){
-                std::cout << "BLT instruction" << std::endl;
+                cout << "BLT instruction" << endl;
                 ALU_opcode = 3;
                 result = (operation_1 < operation_2);
+                cout << "R[" << rs1 << "] < R[" << rs2 << "]" << endl;
             }
 
             else if(func3 == 5){
-                std::cout << "BGE instruction" << std::endl;
+                cout << "BGE instruction" << endl;
                 ALU_opcode = 14;
                 result = (operation_1 >= operation_2);
+                cout << "R[" << rs1 << "] >= R[" << rs2 << "]" << endl;
             }
 
             else if(func3 == 6){
-                std::cout << "BLTU instruction" << std::endl;
+                cout << "BLTU instruction" << endl;
                 ALU_opcode = 4;
                 result = (operation_1 < operation_2);
+                cout << "R[" << rs1 << "] <= R[" << rs2 << "]" << endl;
             }
 
             else if(func3 == 7){
-                std::cout << "BGEU instruction" << std::endl;
+                cout << "BGEU instruction" << endl;
                 ALU_opcode = 15;
                 result = (operation_1 >= operation_2);
+                cout << "R[" << rs1 << "] >= R[" << rs2 << "]" << endl;
             }
 
             else{
@@ -605,12 +615,7 @@ class Processor
                 PC = PC + 4;
             }
 
-            destination = sext_imm;
-            operation_1 = R[rs1];
-            operation_2 = R[rs2];
-            control = 0;
-
-            cout << "Result: "<< result << "\n";
+            cout << "Result: "<< result << "\n" << endl;
             break;
             }
 
