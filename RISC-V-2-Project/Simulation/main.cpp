@@ -9,7 +9,6 @@
 int main() {
 
 ac_int<32,false> i = 50;
-
 ac_int<32,false> instruction_mem[256];
 ac::init_array<AC_VAL_0>(instruction_mem, 256);
 ac_int<32,true> data_mem[256];
