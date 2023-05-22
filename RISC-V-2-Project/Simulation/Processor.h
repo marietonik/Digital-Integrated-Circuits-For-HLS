@@ -4,7 +4,6 @@
 #include "ALU.h"
 #include "Processor.h"
 #include "ac_int.h"
-#include "mc_scverify.h"
 #include <iostream>
 #include <bitset>
 using namespace std;

@@ -4,6 +4,7 @@
 #include "ac_int.h"
 #include "ALU.h"
 #include "Processor.h"
+#include "mc_scverify.h"
 
 int main() {
 
