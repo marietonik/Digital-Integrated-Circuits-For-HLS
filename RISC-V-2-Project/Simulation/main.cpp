@@ -6,7 +6,7 @@
 #include "Processor.h"
 #include "mc_scverify.h"
 
-int main() {
+CCS_MAIN(int argc, char argv){
 
 ac_int<32,false> i = 50;
 ac_int<32,false> instruction_mem[256];
@@ -62,8 +62,7 @@ i++;
 
 }
 
-cout << "Execution finished." << "\n" << endl;
+std::cout << "Execution finished." << "\n" << std::endl;
 
-return 0;
-
+CCS_RETURN(0);
 }

@@ -22,7 +22,7 @@ class Processor
         PC = 200;
         R[0] = 0;
         invalid_instruction = 0;
-        cout << "\n" << "Initial PC is: " << PC << "\n" << endl;
+        std::cout << "\n" << "Initial PC is: " << PC << "\n" << std::endl;
     }
 
     ac_int<32,true> i_immediate(ac_int<32,true> instruction){
@@ -116,25 +116,25 @@ class Processor
             result = alu.operations(ALU_opcode, operation_1, operation_2);
             value = result;
             R[destination] = value;
-            cout << "\n" << "Result: "<< result << " written in register R[" << destination << "] \n" << endl;
+            std::cout << "\n" << "Result: "<< result << " written in register R[" << destination << "] \n" << std::endl;
         }
 
         else if(control == 2){
             operation_1 = (operation_1).slc<30>(2);
             value = (operation_2).slc<30>(2) + operation_1;
             R[destination] = data_memory[value];
-            cout << "\n" << "Load word from memory address: mem[Operant 2 + "<< operation_1 << "] and write to R[" << destination << "] \n" << endl;
+            std::cout << "\n" << "Load word from memory address: mem[Operant 2 + "<< operation_1 << "] and write to R[" << destination << "] \n" << std::endl;
         }
 
         else if(control == 3){
             operation_2 = (operation_2).slc<30>(2);
             value = (operation_1).slc<30>(2) + operation_2;
             data_memory[value] = destination;
-            cout << "\n" << "Store word from destination register and write to memory: mem[Operant 1 + " << operation_2 << "] \n" << endl;
+            std::cout << "\n" << "Store word from destination register and write to memory: mem[Operant 1 + " << operation_2 << "] \n" << std::endl;
         }
 
         else{
-            cout << "Continue...\n" << endl;
+            std::cout << "Continue...\n" << std::endl;
         }
 
         return 0;
@@ -143,13 +143,13 @@ class Processor
     ac_int<1,false> check_decode(ac_int<1,false> invalid_instruction, ac_int<7,false> opcode, ac_int<4,false> ALU_opcode, ac_int<3,false> control){
 
         if(invalid_instruction == 0){
-            cout << "Opcode: " << opcode << endl;
-            cout << "ALU opcode: " << ALU_opcode << endl;
-            cout << "Control: " << control << endl;
+            std::cout << "Opcode: " << opcode << std::endl;
+            std::cout << "ALU opcode: " << ALU_opcode << std::endl;
+            std::cout << "Control: " << control << std::endl;
         }
 
         else{
-            cout << "Break due to invalid parameters..." << endl;
+            std::cout << "Break due to invalid parameters..." << std::endl;
         }
 
         return invalid_instruction;
@@ -180,15 +180,15 @@ class Processor
                 if(func7 == 0){
                     
                     if(func3 == 0){
-                        std::cout << "ADD Instruction" << endl;
+                        std::cout << "ADD Instruction" << std::endl;
                         ALU_opcode = 1;
                     }
                     else if(func3 == 1){
-                        std::cout << "SLL Instruction" << endl;
+                        std::cout << "SLL Instruction" << std::endl;
                         ALU_opcode = 2;
                     }
                     else if(func3 == 2){
-                        std::cout << "SLT Instruction" << endl;
+                        std::cout << "SLT Instruction" << std::endl;
                         ALU_opcode = 3;
                     }
                     else if(func3 == 3){
@@ -196,23 +196,23 @@ class Processor
                         ALU_opcode = 4;
                     }
                     else if(func3 == 4){
-                        std::cout << "XOR Instruction" << endl;
+                        std::cout << "XOR Instruction" << std::endl;
                         ALU_opcode = 5;
                     }
                     else if(func3 == 5){
-                        std::cout << "SRL Instruction" << endl;
+                        std::cout << "SRL Instruction" << std::endl;
                         ALU_opcode = 6;
                     }
                     else if(func3 == 6){
-                        std::cout << "OR Instruction" << endl;
+                        std::cout << "OR Instruction" << std::endl;
                         ALU_opcode = 7;
                     }
                     else if(func3 == 7){
-                        std::cout << "AND Instruction" << endl;
+                        std::cout << "AND Instruction" << std::endl;
                         ALU_opcode = 8;
                     }
                     else{
-                        std::cout << "Invalid func3" << endl;
+                        std::cout << "Invalid func3" << std::endl;
                         invalid_instruction = 1;
                         ALU_opcode = 0;
                     }
@@ -222,11 +222,11 @@ class Processor
                 else if(func7[0] == 1){
 
                     if(func3 == 0){
-                        std::cout << "MUL Instruction" << endl;
+                        std::cout << "MUL Instruction" << std::endl;
                         ALU_opcode = 9;
                     }
                     else{
-                        std::cout << "Invalid func3" << endl;
+                        std::cout << "Invalid func3" << std::endl;
                         invalid_instruction = 1;
                         ALU_opcode = 0;
                     }
@@ -235,24 +235,24 @@ class Processor
                 else if(func7[5] == 1){
 
                     if(func3 == 0){
-                        std::cout << "SUB Instruction" << endl;
+                        std::cout << "SUB Instruction" << std::endl;
                         ALU_opcode = 10;
                     }
 
                     else if(func3 == 5){
-                        std::cout << "SRA Instruction" << endl;
+                        std::cout << "SRA Instruction" << std::endl;
                         ALU_opcode = 11;
                     }
 
                     else{
-                        std::cout << "Invalid func3" << endl;
+                        std::cout << "Invalid func3" << std::endl;
                         invalid_instruction = 1;
                         ALU_opcode = 0;
                     }
                 }
 
                 else{
-                    std::cout << "Invalid func7" << endl;
+                    std::cout << "Invalid func7" << std::endl;
                     invalid_instruction = 1;
                     ALU_opcode = 0;
                 }
@@ -262,9 +262,9 @@ class Processor
                 operation_2 = R[rs2];
                 control = 1;
 
-                cout << "\n" << "Operant 1: R[" << rs1 << "]" << endl;
-                cout << "Operant 2: R[" << rs2 << "]" << endl;
-                cout << "Destination: R[" << destination << "]" << "\n" << endl;
+                std::cout << "\n" << "Operant 1: R[" << rs1 << "]" << std::endl;
+                std::cout << "Operant 2: R[" << rs2 << "]" << std::endl;
+                std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
                 PC = PC + 4;
 
                 break;
@@ -283,27 +283,27 @@ class Processor
                 }
 
                 if (func3 == 0){
-                    std::cout << "ADDI Instruction" << endl;
+                    std::cout << "ADDI Instruction" << std::endl;
                     ALU_opcode = 1;
                 }
 
                 else if(func3 == 1){
-                    std::cout << "SLLI Instruction" << endl;
+                    std::cout << "SLLI Instruction" << std::endl;
                     ALU_opcode = 2;
                 }
 
                 else if(func3 == 2){
-                    std::cout << "SLTI Instruction" << endl;
+                    std::cout << "SLTI Instruction" << std::endl;
                     ALU_opcode = 3;
                 }
 
                 else if(func3 == 3){
-                    std::cout << "SLTIU Instruction" << endl;
+                    std::cout << "SLTIU Instruction" << std::endl;
                     ALU_opcode = 4;
                 }        
 
                 else if(func3 == 4){
-                    std::cout << "XORI Instruction" << endl;
+                    std::cout << "XORI Instruction" << std::endl;
                     ALU_opcode = 5;
                 }
 
@@ -320,24 +320,24 @@ class Processor
                     }
 
                     else{
-                        std::cout << "Invalid func3" << endl;
+                        std::cout << "Invalid func3" << std::endl;
                         invalid_instruction = 1;
                         ALU_opcode = 0;
                     }
                 }
 
                 else if(func3 == 6){
-                    std::cout << "ORI Instruction" << endl;
+                    std::cout << "ORI Instruction" << std::endl;
                     ALU_opcode = 7;
                 }
 
                 else if(func3 == 7){
-                    std::cout << "ANDI Instruction" << endl;
+                    std::cout << "ANDI Instruction" << std::endl;
                     ALU_opcode = 8;
                 }
 
                 else{
-                    std::cout << "Invalid func3" << endl;
+                    std::cout << "Invalid func3" << std::endl;
                     invalid_instruction = 1;
                     ALU_opcode = 0;
                 }
@@ -347,9 +347,9 @@ class Processor
                 operation_2 = sext_imm;
                 control = 1;
 
-                cout << "\n" << "Operant 1: R[" << rs1 << "]" << endl;
-                cout << "Operant 2: " << bitset<32>(sext_imm) << endl;
-                cout << "Destination: R[" << destination << "]" << "\n" << endl;
+                std::cout << "\n" << "Operant 1: R[" << rs1 << "]" << std::endl;
+                std::cout << "Operant 2: " << bitset<32>(sext_imm) << std::endl;
+                std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
                 PC = PC + 4;
 
                 break;
@@ -368,12 +368,12 @@ class Processor
             }
 
             if(func3 == 2){
-                std::cout << "LW instruction" << endl;
+                std::cout << "LW instruction" << std::endl;
                 ALU_opcode = 0;
             }
 
             else{
-                std::cout << "Invalid func3" << endl;
+                std::cout << "Invalid func3" << std::endl;
                 invalid_instruction = 1;
                 ALU_opcode = 0;
             }
@@ -383,9 +383,9 @@ class Processor
             operation_2 = R[rs1];
             control = 2;
 
-            cout << "\n" << "Operant 1: " << (sext_imm).slc<30>(2) << endl;
-            cout << "Operant 2: R[" << rs1 << "]" << endl;
-            cout << "Destination: R[" << destination << "]" << "\n" << endl;
+            std::cout << "\n" << "Operant 1: " << (sext_imm).slc<30>(2) << std::endl;
+            std::cout << "Operant 2: R[" << rs1 << "]" << std::endl;
+            std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
             PC = PC + 4;
 
             break;
@@ -419,9 +419,9 @@ class Processor
             operation_2 = sext_imm;
             control = 3;
 
-            cout << "\n" << "Operant 1: R[" << rs1 << "]" << endl;
-            cout << "Operant 2: " << (sext_imm).slc<30>(2) << endl;
-            cout << "Destination: R[" << rs2 << "]" << "\n" << endl;
+            std::cout << "\n" << "Operant 1: R[" << rs1 << "]" << std::endl;
+            std::cout << "Operant 2: " << (sext_imm).slc<30>(2) << std::endl;
+            std::cout << "Destination: R[" << rs2 << "]" << "\n" << std::endl;
             PC = PC + 4;
 
             break;
@@ -439,11 +439,11 @@ class Processor
             operation_2 = 0;
             control = 5;
 
-            cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << endl;
-            cout << "Operant 1: " << bitset<32>(sext_imm) << endl;
-            cout << "Operant 2: " << operation_2 << endl;
-            cout << "Destination: R[" << destination << "]" << "\n" << endl;
-            cout << "Result: "<< bitset<32>(sext_imm) << "\n";
+            std::cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << std::endl;
+            std::cout << "Operant 1: " << bitset<32>(sext_imm) << std::endl;
+            std::cout << "Operant 2: " << operation_2 << std::endl;
+            std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
+            std::cout << "Result: "<< bitset<32>(sext_imm) << "\n" << std::endl;
 
             PC = PC + 4;
             break;
@@ -461,11 +461,11 @@ class Processor
             operation_2 = PC;
             control = 5;
             
-            cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << endl;
-            cout << "Operant 1: " << bitset<32>(sext_imm) << endl;
-            cout << "Operant 2: " << operation_2 << endl;
-            cout << "Destination: R[" << destination << "]" << "\n" << endl;
-            cout << "Result: "<< bitset<32>(sext_imm + PC) << "\n";
+            std::cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << std::endl;
+            std::cout << "Operant 1: " << bitset<32>(sext_imm) << std::endl;
+            std::cout << "Operant 2: " << operation_2 << std::endl;
+            std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
+            std::cout << "Result: "<< bitset<32>(sext_imm + PC) << "\n" << std::endl;
             
             PC = PC + 4;  
             break;
@@ -488,9 +488,9 @@ class Processor
             operation_2 = sext_imm;
             control = 4;
             
-            cout << "\n" << "Operant 1: " << bitset<32>(operation_1) << endl;
-            cout << "Operant 2: " << bitset<32>(sext_imm) << endl;
-            cout << "Destination: R[" << destination << "]" << "\n" << endl;
+            std::cout << "\n" << "Operant 1: " << bitset<32>(operation_1) << std::endl;
+            std::cout << "Operant 2: " << bitset<32>(sext_imm) << std::endl;
+            std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
 
             R[rd] = PC + 4;
             PC = operation_1 + operation_2;
@@ -499,9 +499,9 @@ class Processor
             }
             case 103: 
             {
-            ac_int<32,true> rd = instruction.slc<5>(7);
-            ac_int<32,true> imm = instruction.slc<12>(20);
-            ac_int<32,true> rs1 = instruction.slc<5>(15);
+            ac_int<5,false> rd = instruction.slc<5>(7);
+            ac_int<3,false> func3 = instruction.slc<12>(20);
+            ac_int<5,false> rs1 = instruction.slc<5>(15);
 
             ac_int<20,false> sign_imm = -1;
             ac_int<32,true> sext_imm = i_immediate(instruction);
@@ -521,7 +521,7 @@ class Processor
             }
 
             else{
-                std::cout << "Invalid instruction" << endl;
+                std::cout << "Invalid instruction" << std::endl;
                 invalid_instruction = 1;
                 ALU_opcode = 0;
             }
@@ -531,9 +531,9 @@ class Processor
             operation_2 = sext_imm;
             control = 4;
 
-            cout << "\n" << "Operant 1: R[" << operation_1 << "]" << endl;
-            cout << "Operant 2: " << sext_imm << endl;
-            cout << "Destination: R[" << destination << "]" << "\n" << endl;
+            std::cout << "\n" << "Operant 1: R[" << operation_1 << "]" << std::endl;
+            std::cout << "Operant 2: " << sext_imm << std::endl;
+            std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
 
             R[rd] = PC + 4;
             PC = operation_1 + operation_2;
@@ -560,49 +560,49 @@ class Processor
             }
 
             if(func3 == 0){
-                cout << "BEQ instruction" << endl;
+                std::cout << "BEQ instruction" << std::endl;
                 ALU_opcode = 12;
                 result = (operation_1 == operation_2);
-                cout << "R[" << rs1 << "] == R[" << rs2 << "]" << endl;
+                cout << "R[" << rs1 << "] == R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 1){
-                cout << "BNE instruction" << endl;
+                std::cout << "BNE instruction" << std::endl;
                 ALU_opcode = 13;
                 result = (operation_1 != operation_2);
-                cout << "R[" << rs1 << "] != R[" << rs2 << "]" << endl;
+                cout << "R[" << rs1 << "] != R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 4){
-                cout << "BLT instruction" << endl;
+                std::cout << "BLT instruction" << endl;
                 ALU_opcode = 3;
                 result = (operation_1 < operation_2);
-                cout << "R[" << rs1 << "] < R[" << rs2 << "]" << endl;
+                std::cout << "R[" << rs1 << "] < R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 5){
-                cout << "BGE instruction" << endl;
+                std::cout << "BGE instruction" << std::endl;
                 ALU_opcode = 14;
                 result = (operation_1 >= operation_2);
-                cout << "R[" << rs1 << "] >= R[" << rs2 << "]" << endl;
+                std::cout << "R[" << rs1 << "] >= R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 6){
-                cout << "BLTU instruction" << endl;
+                std::cout << "BLTU instruction" << std::endl;
                 ALU_opcode = 4;
                 result = (operation_1 < operation_2);
-                cout << "R[" << rs1 << "] <= R[" << rs2 << "]" << endl;
+                std::cout << "R[" << rs1 << "] <= R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 7){
-                cout << "BGEU instruction" << endl;
+                std::cout << "BGEU instruction" << std::endl;
                 ALU_opcode = 15;
                 result = (operation_1 >= operation_2);
-                cout << "R[" << rs1 << "] >= R[" << rs2 << "]" << endl;
+                std::cout << "R[" << rs1 << "] >= R[" << rs2 << "]" << std::endl;
             }
 
             else{
-                std::cout << "Invalid func3" << endl;
+                std::cout << "Invalid func3" << std::endl;
                 invalid_instruction = 1;
                 ALU_opcode = 0;
                 result = 0;
@@ -615,7 +615,7 @@ class Processor
                 PC = PC + 4;
             }
 
-            cout << "Result: "<< result << "\n" << endl;
+            std::cout << "Result: "<< result << "\n" << std::endl;
             break;
             }
 
