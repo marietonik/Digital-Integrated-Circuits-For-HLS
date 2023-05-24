@@ -1,10 +1,10 @@
 #include <iostream>
 #include <cstdlib>
-
 #include "ac_int.h"
 #include "ALU.h"
 #include "Processor.h"
 #include "mc_scverify.h"
+
 
 CCS_MAIN(int argc, char argv){
 
@@ -57,7 +57,7 @@ Processor processor;
 
 while (instruction_mem[i] != 0) {
 
-processor.Processor::run(instruction_mem, data_mem);
+processor.run(instruction_mem, data_mem);
 i++;
 
 }
