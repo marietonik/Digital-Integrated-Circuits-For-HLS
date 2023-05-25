@@ -386,7 +386,7 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
                 control = 1;
 
                 std::cout << "\n" << "Operant 1: R[" << rs1 << "]" << std::endl;
-                std::cout << "Operant 2: " << bitset::bitset<32>(sext_imm) << std::endl;
+                std::cout << "Operant 2: " << std::bitset<32>(sext_imm) << std::endl;
                 std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
                 PC = PC + 4;
 
@@ -477,11 +477,11 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
             operation_2 = 0;
             control = 5;
 
-            std::cout << "\n" << "Input Operant 1: " << bitset::bitset<32>(sext_imm) << std::endl;
-            std::cout << "Operant 1: " << bitset::bitset<32>(sext_imm) << std::endl;
+            std::cout << "\n" << "Input Operant 1: " << std::bitset<32>(sext_imm) << std::endl;
+            std::cout << "Operant 1: " << std::bitset<32>(sext_imm) << std::endl;
             std::cout << "Operant 2: " << operation_2 << std::endl;
             std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
-            std::cout << "Result: "<< bitset::bitset<32>(sext_imm) << "\n" << std::endl;
+            std::cout << "Result: "<< std::bitset<32>(sext_imm) << "\n" << std::endl;
 
             PC = PC + 4;
             break;
@@ -499,11 +499,11 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
             operation_2 = PC;
             control = 5;
             
-            std::cout << "\n" << "Input Operant 1: " << bitset::bitset<32>(sext_imm) << std::endl;
-            std::cout << "Operant 1: " << bitset::bitset<32>(sext_imm) << std::endl;
+            std::cout << "\n" << "Input Operant 1: " << std::bitset<32>(sext_imm) << std::endl;
+            std::cout << "Operant 1: " << std::bitset<32>(sext_imm) << std::endl;
             std::cout << "Operant 2: " << operation_2 << std::endl;
             std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
-            std::cout << "Result: "<< bitset::bitset<32>(sext_imm + PC) << "\n" << std::endl;
+            std::cout << "Result: "<< std::bitset<32>(sext_imm + PC) << "\n" << std::endl;
             
             PC = PC + 4;  
             break;
@@ -526,8 +526,8 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
             operation_2 = sext_imm;
             control = 4;
             
-            std::cout << "\n" << "Operant 1: " << bitset::bitset<32>(operation_1) << std::endl;
-            std::cout << "Operant 2: " << bitset::bitset<32>(sext_imm) << std::endl;
+            std::cout << "\n" << "Operant 1: " << std::bitset<32>(operation_1) << std::endl;
+            std::cout << "Operant 2: " << std::bitset<32>(sext_imm) << std::endl;
             std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
 
             R[rd] = PC + 4;
