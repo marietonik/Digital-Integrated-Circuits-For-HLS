@@ -500,7 +500,7 @@ class Processor
             case 103: 
             {
             ac_int<32,true> rd = instruction.slc<5>(7);
-            ac_int<32,true> imm = instruction.slc<12>(20);
+            ac_int<3,false> func3 = instruction.slc<12>(20);
             ac_int<32,true> rs1 = instruction.slc<5>(15);
 
             ac_int<20,false> sign_imm = -1;
