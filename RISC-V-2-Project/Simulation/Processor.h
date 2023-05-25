@@ -2,7 +2,6 @@
 #define Processor_H
 
 #include "ALU.h"
-#include "Processor.h"
 #include "ac_int.h"
 #include <iostream>
 #include <bitset>
@@ -102,36 +101,7 @@ class Processor
         return imm;
     }
     
-
-    ac_int<1,false> run(ac_int<32,false> instruction_mem[256], ac_int<32,true> data_mem[256]){
-        
-        ac_int<32,true> temp;
-        
-        decode_instruction(instruction_mem[PC.slc<30>(2)]);
-        
-        if(control_mem == 2){
-            
-            temp = data_mem[value];
-            R[destination_mem] = temp;
-            std::cout << "Word: " << R[destination_mem] << " written in R[" << destination_mem << "]\n" << std::endl;
-        }
-
-        else if(control_mem == 3){
-            
-            temp = destination_mem;
-            data_mem[value] = destination_mem;
-            std::cout << "Word: " << data_mem[value] << " written in mem[" << destination_mem << "]\n" << std::endl;
-        }
-
-        else{
-
-            std::cout << "Continue...\n" << std::endl;
-        }
-
-        return 1;        
-    }
-
-ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<32,false> destination, ac_int<3,false> control){
+    ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<32,false> destination, ac_int<3,false> control){
         
         ac_int<32,true> result;
         ac_int<32,true> value_alu;
@@ -670,5 +640,34 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
         execute(ALU_opcode, operation_1, operation_2, destination, control);
         return 0;
     }
+
+    bool CCS_BLOCK(run)(ac_int<32,false> instruction_mem[256], ac_int<32,true> data_mem[256]){
+        
+        ac_int<32,true> temp;
+        
+        decode_instruction(instruction_mem[PC.slc<30>(2)]);
+        
+        if(control_mem == 2){
+            
+            temp = data_mem[value];
+            R[destination_mem] = temp;
+            std::cout << "Word: " << R[destination_mem] << " written in R[" << destination_mem << "]\n" << std::endl;
+        }
+
+        else if(control_mem == 3){
+            
+            temp = destination_mem;
+            data_mem[value] = destination_mem;
+            std::cout << "Word: " << data_mem[value] << " written in mem[" << destination_mem << "]\n" << std::endl;
+        }
+
+        else{
+
+            std::cout << "Continue...\n" << std::endl;
+        }
+
+        return 1;        
+    }
+
 };
 #endif
