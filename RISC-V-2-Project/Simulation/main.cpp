@@ -1,8 +1,11 @@
 #include <iostream>
 #include <cstdlib>
+
 #include "ac_int.h"
+#include "ac_fixed.h"
 #include "ALU.h"
 #include "Processor.h"
+
 #include "mc_scverify.h"
 
 
@@ -12,12 +15,13 @@ ac_int<32,false> i = 50;
 ac_int<32,false> instruction_mem[256];
 ac::init_array<AC_VAL_0>(instruction_mem, 256);
 ac_int<32,true> data_mem[256];
-ac::init_array<AC_VAL_0>(data_mem, 256); 
+ac::init_array<AC_VAL_0>(data_mem, 256);
 
 data_mem[100] = 100;
-data_mem[101] = 101; 
+data_mem[104] = 101; 
 
 // Test:
+
 instruction_mem[50] = 0b00000000100100011000010100110011; // ADD   R[10], R[3],   R[9]
 instruction_mem[51] = 0b01000000101001100000000010110011; // SUB   R[1],  R[12],  R[10]
 instruction_mem[52] = 0b00000000001101001111001110110011; // AND   R[7],  R[9],   R[3]
@@ -42,6 +46,8 @@ instruction_mem[70] = 0b10111010100000001001001100110111; // LUI   R[6],  101110
 instruction_mem[71] = 0b00000000000000000000000100010111; // AUIPC R[2],  00000000000000000000
 instruction_mem[72] = 0b00000000010000100010001010000011; // LW    R[5],  mem[R[4] + 1]
 instruction_mem[73] = 0b00000000011000100010010000100011; // SW    mem[R[4] + 2], R6
+
+/*
 instruction_mem[74] = 0b00000000010100100000110001100011; // BEQ   R[4],  R[5],   24
 instruction_mem[75] = 0b11111110010100100001011011100011; // BNE   R[4],  R[5],   -20
 instruction_mem[76] = 0b00000000010100100100101001100011; // BLT   R[4],  R[5],   20
@@ -52,7 +58,7 @@ instruction_mem[80] = 0b00000000000000000000000000000000; // NOPs
 instruction_mem[81] = 0b11111111010111111111010111101111; // JAL   R[11],         -13
 instruction_mem[82] = 0b00000000000000110000000001100111; // JR    R[6]
 instruction_mem[83] = 0b00000000000000001000100101100111; // JALR  R[18], R1,     0 
-
+*/
 Processor processor;
 
 while (instruction_mem[i] != 0) {
@@ -62,7 +68,19 @@ i++;
 
 }
 
-std::cout << "Execution finished." << "\n" << std::endl;
+cout << "Execution finished." << "\n" << endl;
+
+for (i = 0; i < 256; i++) {
+
+    if(data_mem[i] != 0){
+
+    cout << "mem[" << data_mem[i] << "]\n" << endl;
+
+    }
+
+    i++;
+}
 
 CCS_RETURN(0);
+
 }
