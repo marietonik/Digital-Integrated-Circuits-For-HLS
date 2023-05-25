@@ -113,19 +113,19 @@ class Processor
             
             temp = data_mem[value];
             R[destination_mem] = temp;
-            cout << "Word: " << R[destination_mem] << " written in R[" << destination_mem << "]\n" << endl;
+            std::cout << "Word: " << R[destination_mem] << " written in R[" << destination_mem << "]\n" << std::endl;
         }
 
         else if(control_mem == 3){
             
             temp = destination_mem;
             data_mem[value] = destination_mem;
-            cout << "Word: " << data_mem[value] << " written in mem[" << destination_mem << "]\n" << endl;
+            std::cout << "Word: " << data_mem[value] << " written in mem[" << destination_mem << "]\n" << std::endl;
         }
 
         else{
 
-            cout << "Continue...\n" << endl;
+            std::cout << "Continue...\n" << std::endl;
         }
 
         return 1;        
@@ -143,15 +143,15 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
             result = alu.operations(ALU_opcode, operation_1, operation_2);
             value_alu = result;
             R[destination_mem] = value_alu;
-            cout << "\n" << "Result: "<< result << " written in register R[" << destination_mem << "] \n" << endl;
+            std::cout << "\n" << "Result: "<< result << " written in register R[" << destination_mem << "] \n" << std::endl;
         }
 
         else if(control == 2){
             operation_1 = (operation_1).slc<30>(2);
             value = (operation_2).slc<30>(2) + operation_1;
-            cout << "\n" << "Load word from memory address: mem[Operant 2 + "<< operation_1 << "] and write to R[" << destination_mem << "] \n" << endl;
+            std::cout << "\n" << "Load word from memory address: mem[Operant 2 + "<< operation_1 << "] and write to R[" << destination_mem << "] \n" << std::endl;
             if((value > 256) || (value < 0)){
-                cout << "Error: Memory out of bounds!\n" << endl;
+                std::cout << "Error: Memory out of bounds!\n" << endl;
                 value = 0;
             }
         }
@@ -159,21 +159,21 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
         else if(control == 3){
             operation_2 = (operation_2).slc<30>(2);
             value = (operation_1).slc<30>(2) + operation_2;
-            cout << "\n" << "Store word from destination register and write to memory: mem[Operant 1 + " << operation_2 << "] \n" << endl;
+            std::cout << "\n" << "Store word from destination register and write to memory: mem[Operant 1 + " << operation_2 << "] \n" << std::endl;
             
             if((value > 256) || (value < 0)){
-                cout << "Error: Memory out of bounds!\n" << endl;
+                std::cout << "Error: Memory out of bounds!\n" << std::endl;
                 value = 0;
             }
 
             else if((destination_mem > 256) || (destination_mem < 0)){
-                cout << "Error: Register memory out of bounds!\n" << endl;
+                std::cout << "Error: Register memory out of bounds!\n" << std::endl;
                 destination_mem = 0;
             }
         }
 
         else{
-            cout << "Continue...\n" << endl;
+            std::cout << "Continue...\n" << std::endl;
         }
 
         return 0;
@@ -230,7 +230,7 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
                         ALU_opcode = 3;
                     }
                     else if(func3 == 3){
-                        std::cout << "SLTU Instruction" << endl;
+                        std::cout << "SLTU Instruction" << std::endl;
                         ALU_opcode = 4;
                     }
                     else if(func3 == 4){
@@ -447,7 +447,7 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
             }
 
             else{
-                std::cout << "Invalid func3" << endl;
+                std::cout << "Invalid func3" << std::endl;
                 invalid_instruction = 1;
                 ALU_opcode = 0;
             }
@@ -601,18 +601,18 @@ ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1
                 std::cout << "BEQ instruction" << std::endl;
                 ALU_opcode = 12;
                 result = (operation_1 == operation_2);
-                cout << "R[" << rs1 << "] == R[" << rs2 << "]" << std::endl;
+                std::cout << "R[" << rs1 << "] == R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 1){
                 std::cout << "BNE instruction" << std::endl;
                 ALU_opcode = 13;
                 result = (operation_1 != operation_2);
-                cout << "R[" << rs1 << "] != R[" << rs2 << "]" << std::endl;
+                std::cout << "R[" << rs1 << "] != R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 4){
-                std::cout << "BLT instruction" << endl;
+                std::cout << "BLT instruction" << std::endl;
                 ALU_opcode = 3;
                 result = (operation_1 < operation_2);
                 std::cout << "R[" << rs1 << "] < R[" << rs2 << "]" << std::endl;
