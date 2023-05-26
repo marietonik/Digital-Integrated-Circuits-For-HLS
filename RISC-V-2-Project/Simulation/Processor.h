@@ -5,6 +5,8 @@
 #include "ac_int.h"
 #include <iostream>
 #include <bitset>
+
+#include "mc_scverify.h"
 using namespace std;
 
 class Processor
