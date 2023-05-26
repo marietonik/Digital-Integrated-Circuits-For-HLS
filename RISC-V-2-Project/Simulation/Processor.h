@@ -641,11 +641,13 @@ class Processor
         return 0;
     }
 
-    bool CCS_BLOCK(run)(ac_int<32,false> instruction_mem[256], ac_int<32,true> data_mem[256]){
+    bool CCS_BLOCK(run)(ac_int<32,false> instruction_mem[256], ac_int<32,true> data_mem[256]) {
         
         ac_int<32,true> temp;
-        
-        decode_instruction(instruction_mem[PC.slc<30>(2)]);
+        ac_int<32,false> instruction[256];
+
+        instruction = instruction_mem[PC.slc<30>(2)];
+        decode_instruction(instruction);
         
         if(control_mem == 2){
             
