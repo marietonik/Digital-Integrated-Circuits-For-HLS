@@ -10,7 +10,7 @@
 #include "mc_scverify.h"
 using namespace std;
 
-CCS_MAIN(int argc, char* argv[]){
+CCS_MAIN(int argc, char** argv){
 
 ac_int<32,false> i = 50;
 ac_int<32,false> instruction_mem[256];
