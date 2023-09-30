@@ -6,9 +6,7 @@ ______________________________________
 [Catapult High-Level Synthesis and Verification](https://eda.sw.siemens.com/en-US/ic/catapult-high-level-synthesis/) 
 program used for the synthesis of the hardware needed and its simulation.
 
-<p align="center">
-  ![flow-chart](https://github.com/marietonik/Digital-Integrated-Circuits-For-HLS/assets/53263761/05663665-2f04-44a3-8b2a-0baeed816aa8)
-</p>
+![flow-chart](https://github.com/marietonik/Digital-Integrated-Circuits-For-HLS/assets/53263761/05663665-2f04-44a3-8b2a-0baeed816aa8)
 
 ## K-Means for HLS on Catapult
 
