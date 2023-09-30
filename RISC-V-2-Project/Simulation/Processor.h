@@ -2,10 +2,11 @@
 #define Processor_H
 
 #include "ALU.h"
-#include "Processor.h"
 #include "ac_int.h"
 #include <iostream>
 #include <bitset>
+
+#include "mc_scverify.h"
 using namespace std;
 
 class Processor
@@ -14,8 +15,10 @@ class Processor
     ac_int<32,false> PC;
     ac_int<32,true> R[32];
     ac_int<1,false> invalid_instruction;
+    ac_int<3,false> control_mem;
+    ac_int<32,false> destination_mem;
+    ac_int<32,true> value;
     ALU alu;
-    
 
     Processor()
     {
@@ -100,37 +103,45 @@ class Processor
         return imm;
     }
     
-
-    ac_int<1,false> run(ac_int<32,false> instruction_mem[256], ac_int<32,true> data_mem[256]){
-        
-        decode_instruction(instruction_mem[PC.slc<30>(2)], data_mem[PC.slc<30>(2)]);
-        return 1;
-    }
-
-    ac_int<32,true> execute(ac_int<32,true> data_memory, ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<32,false> destination, ac_int<3,false> control){
+    ac_int<32,true> execute(ac_int<4,false> ALU_opcode, ac_int<32,false> operation_1, ac_int<32,false> operation_2, ac_int<32,false> destination, ac_int<3,false> control){
         
         ac_int<32,true> result;
-        ac_int<32,true> value;
+        ac_int<32,true> value_alu;
+
+        control_mem = control;
+        destination_mem = destination;
 
         if(control == 1){ 
             result = alu.operations(ALU_opcode, operation_1, operation_2);
-            value = result;
-            R[destination] = value;
-            std::cout << "\n" << "Result: "<< result << " written in register R[" << destination << "] \n" << std::endl;
+            value_alu = result;
+            R[destination_mem] = value_alu;
+            std::cout << "\n" << "Result: "<< result << " written in register R[" << destination_mem << "] \n" << std::endl;
         }
 
         else if(control == 2){
             operation_1 = (operation_1).slc<30>(2);
             value = (operation_2).slc<30>(2) + operation_1;
-            R[destination] = data_memory[value];
-            std::cout << "\n" << "Load word from memory address: mem[Operant 2 + "<< operation_1 << "] and write to R[" << destination << "] \n" << std::endl;
+            std::cout << "\n" << "Load word from memory address: mem[Operant 2 + "<< operation_1 << "] and write to R[" << destination_mem << "] \n" << std::endl;
+            if((value > 256) || (value < 0)){
+                std::cout << "Error: Memory out of bounds!\n" << endl;
+                value = 0;
+            }
         }
 
         else if(control == 3){
             operation_2 = (operation_2).slc<30>(2);
             value = (operation_1).slc<30>(2) + operation_2;
-            data_memory[value] = destination;
             std::cout << "\n" << "Store word from destination register and write to memory: mem[Operant 1 + " << operation_2 << "] \n" << std::endl;
+            
+            if((value > 256) || (value < 0)){
+                std::cout << "Error: Memory out of bounds!\n" << std::endl;
+                value = 0;
+            }
+
+            else if((destination_mem > 256) || (destination_mem < 0)){
+                std::cout << "Error: Register memory out of bounds!\n" << std::endl;
+                destination_mem = 0;
+            }
         }
 
         else{
@@ -155,7 +166,7 @@ class Processor
         return invalid_instruction;
     }
 
-    ac_int<32,true> decode_instruction(ac_int<32,true> instruction, ac_int<32,true> memory){
+    ac_int<32,true> decode_instruction(ac_int<32,true> instruction){
 
         ac_int<4,false> ALU_opcode;
         ac_int<32,false> destination;
@@ -165,7 +176,6 @@ class Processor
         
         ac_int<1,false> invalid_instruction = 0;
         ac_int<7,false> opcode = instruction.slc<7>(0);
-        ac_int<32,true> data_memory = memory;
 
         switch(opcode){
 
@@ -192,7 +202,7 @@ class Processor
                         ALU_opcode = 3;
                     }
                     else if(func3 == 3){
-                        std::cout << "SLTU Instruction" << endl;
+                        std::cout << "SLTU Instruction" << std::endl;
                         ALU_opcode = 4;
                     }
                     else if(func3 == 4){
@@ -348,7 +358,7 @@ class Processor
                 control = 1;
 
                 std::cout << "\n" << "Operant 1: R[" << rs1 << "]" << std::endl;
-                std::cout << "Operant 2: " << bitset<32>(sext_imm) << std::endl;
+                std::cout << "Operant 2: " << std::bitset<32>(sext_imm) << std::endl;
                 std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
                 PC = PC + 4;
 
@@ -409,7 +419,7 @@ class Processor
             }
 
             else{
-                std::cout << "Invalid func3" << endl;
+                std::cout << "Invalid func3" << std::endl;
                 invalid_instruction = 1;
                 ALU_opcode = 0;
             }
@@ -439,11 +449,11 @@ class Processor
             operation_2 = 0;
             control = 5;
 
-            std::cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << std::endl;
-            std::cout << "Operant 1: " << bitset<32>(sext_imm) << std::endl;
+            std::cout << "\n" << "Input Operant 1: " << std::bitset<32>(sext_imm) << std::endl;
+            std::cout << "Operant 1: " << std::bitset<32>(sext_imm) << std::endl;
             std::cout << "Operant 2: " << operation_2 << std::endl;
             std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
-            std::cout << "Result: "<< bitset<32>(sext_imm) << "\n" << std::endl;
+            std::cout << "Result: "<< std::bitset<32>(sext_imm) << "\n" << std::endl;
 
             PC = PC + 4;
             break;
@@ -461,11 +471,11 @@ class Processor
             operation_2 = PC;
             control = 5;
             
-            std::cout << "\n" << "Input Operant 1: " << bitset<32>(sext_imm) << std::endl;
-            std::cout << "Operant 1: " << bitset<32>(sext_imm) << std::endl;
+            std::cout << "\n" << "Input Operant 1: " << std::bitset<32>(sext_imm) << std::endl;
+            std::cout << "Operant 1: " << std::bitset<32>(sext_imm) << std::endl;
             std::cout << "Operant 2: " << operation_2 << std::endl;
             std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
-            std::cout << "Result: "<< bitset<32>(sext_imm + PC) << "\n" << std::endl;
+            std::cout << "Result: "<< std::bitset<32>(sext_imm + PC) << "\n" << std::endl;
             
             PC = PC + 4;  
             break;
@@ -488,8 +498,8 @@ class Processor
             operation_2 = sext_imm;
             control = 4;
             
-            std::cout << "\n" << "Operant 1: " << bitset<32>(operation_1) << std::endl;
-            std::cout << "Operant 2: " << bitset<32>(sext_imm) << std::endl;
+            std::cout << "\n" << "Operant 1: " << std::bitset<32>(operation_1) << std::endl;
+            std::cout << "Operant 2: " << std::bitset<32>(sext_imm) << std::endl;
             std::cout << "Destination: R[" << destination << "]" << "\n" << std::endl;
 
             R[rd] = PC + 4;
@@ -563,18 +573,18 @@ class Processor
                 std::cout << "BEQ instruction" << std::endl;
                 ALU_opcode = 12;
                 result = (operation_1 == operation_2);
-                cout << "R[" << rs1 << "] == R[" << rs2 << "]" << std::endl;
+                std::cout << "R[" << rs1 << "] == R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 1){
                 std::cout << "BNE instruction" << std::endl;
                 ALU_opcode = 13;
                 result = (operation_1 != operation_2);
-                cout << "R[" << rs1 << "] != R[" << rs2 << "]" << std::endl;
+                std::cout << "R[" << rs1 << "] != R[" << rs2 << "]" << std::endl;
             }
 
             else if(func3 == 4){
-                std::cout << "BLT instruction" << endl;
+                std::cout << "BLT instruction" << std::endl;
                 ALU_opcode = 3;
                 result = (operation_1 < operation_2);
                 std::cout << "R[" << rs1 << "] < R[" << rs2 << "]" << std::endl;
@@ -629,8 +639,39 @@ class Processor
         }
 
         check_decode(invalid_instruction, opcode, ALU_opcode, control);
-        execute(data_memory,ALU_opcode, operation_1, operation_2, destination, control);
+        execute(ALU_opcode, operation_1, operation_2, destination, control);
         return 0;
     }
+
+    bool CCS_BLOCK(run)(ac_int<32,false> instruction_mem[256], ac_int<32,true> data_mem[256]) {
+        
+        ac_int<32,true> temp;
+        ac_int<32,false> instruction[256];
+
+        instruction = instruction_mem[PC.slc<30>(2)];
+        decode_instruction(instruction);
+        
+        if(control_mem == 2){
+            
+            temp = data_mem[value];
+            R[destination_mem] = temp;
+            std::cout << "Word: " << R[destination_mem] << " written in R[" << destination_mem << "]\n" << std::endl;
+        }
+
+        else if(control_mem == 3){
+            
+            temp = destination_mem;
+            data_mem[value] = destination_mem;
+            std::cout << "Word: " << data_mem[value] << " written in mem[" << destination_mem << "]\n" << std::endl;
+        }
+
+        else{
+
+            std::cout << "Continue...\n" << std::endl;
+        }
+
+        return 1;        
+    }
+
 };
 #endif
